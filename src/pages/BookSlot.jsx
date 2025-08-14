@@ -22,16 +22,18 @@ export default function BookSlot() {
     "6:00 PM",
   ];
   const navigate = useNavigate();
+  const baseurl = import.meta.env.VITE_API_BASE_URL
+  const razorpay_key = import.meta.env.RAZORPAY_KEY_ID
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      const { data } = await axios.post("http://localhost:5173/create-order", {
+      const { data } = await axios.post(`${baseurl}/create-order`, {
         amount: "499",
       });
 
       const options = {
-        key: "rzp_test_z2QLuHKly8QiED",
+        key: razorpay_key,
         amount: data.order.amount,
         currency: "INR",
         order_id: data.order.id,
@@ -39,7 +41,7 @@ export default function BookSlot() {
         description: "Car service payment",
         handler: async function (response) {
           await axios.post(
-            "http://localhost:8000/bookslot",
+            `${baseurl}/bookslot`,
             { customerName, email, service, timeSlot, type },
             { withCredentials: true }
           );
