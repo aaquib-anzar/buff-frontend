@@ -23,7 +23,8 @@ export default function BookSlot() {
   ];
   const navigate = useNavigate();
   const baseurl = import.meta.env.VITE_API_BASE_URL
-  const razorpay_key = import.meta.env.RAZORPAY_KEY_ID
+  const razorpay_key = import.meta.env.VITE_RAZORPAY_KEY_ID
+  console.log("razorpay_key", razorpay_key, baseurl)
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -40,13 +41,19 @@ export default function BookSlot() {
         name: "BUFF & BEYOND",
         description: "Car service payment",
         handler: async function (response) {
-          await axios.post(
-            `${baseurl}/bookslot`,
-            { customerName, email, service, timeSlot, type },
-            { withCredentials: true }
-          );
-          toast.success(response.data.message);
-          navigate("/");
+          try {
+            const res = await axios.post(
+              `${baseurl}/bookslot`,
+              { customerName, email, service, timeSlot, type },
+              { withCredentials: true }
+            );
+            toast.success(res.data.message);
+            navigate("/");
+          } catch (error) {
+            toast.error(error.response?.data?.message || "Booking failed");
+
+          }
+          
         },
         prefill:{
           name:customerName,
